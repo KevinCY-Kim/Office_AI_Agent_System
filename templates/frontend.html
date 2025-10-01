@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>RAG 챗봇 데모</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f5f5f5; }
+    #chatbox { width: 60%; margin: 20px auto; background: #fff; border-radius: 8px; padding: 15px; box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
+    .message { margin: 10px 0; }
+    .user { text-align: right; }
+    .bot { text-align: left; color: #333; }
+    #inputbox { display: flex; margin-top: 10px; }
+    #query { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 4px; }
+    button { padding: 10px 15px; margin-left: 10px; border: none; background: #007bff; color: white; border-radius: 4px; cursor: pointer; }
+    button:hover { background: #0056b3; }
+    pre { background: #eee; padding: 8px; border-radius: 4px; white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <div id="chatbox">
+    <h2>📑 사내 규정 RAG 챗봇</h2>
+    <div id="messages"></div>
+    <div id="inputbox">
+      <input type="text" id="query" placeholder="질문을 입력하세요..." />
+      <button onclick="sendMessage()">전송</button>
+    </div>
+  </div>
+
+  <script>
+    async function sendMessage() {
+      const query = document.getElementById("query").value.trim();
+      if (!query) return;
+
+      // 사용자 메시지 추가
+      const userMsg = document.createElement("div");
+      userMsg.className = "message user";
+      userMsg.innerText = "🙋 " + query;
+      document.getElementById("messages").appendChild(userMsg);
+
+      // API 호출
+      const response = await fetch("http://localhost:8000/ask", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query })
+      });
+
+      const data = await response.json();
+
+      // 챗봇 응답
+      const botMsg = document.createElement("div");
+      botMsg.className = "message bot";
+
+      let text = "🤖 " + (data.generated_answer || "관련 규정을 찾을 수 없습니다.") + "\n\n";
+      if (data.matches && data.matches.length > 0) {
+        text += "📌 근거 문서:\n";
+        data.matches.forEach((m, i) => {
+          text += `[${i+1}] ${m.title} (점수: ${m.final_score})\n`;
+          text += m.text_snippet + "\n\n";
+        });
+      }
+
+      const pre = document.createElement("pre");
+      pre.innerText = text;
+      botMsg.appendChild(pre);
+
+      document.getElementById("messages").appendChild(botMsg);
+      document.getElementById("query").value = "";
+    }
+  </script>
+</body>
+</html>
