@@ -18,7 +18,10 @@
 </head>
 <body>
   <div id="chatbox">
-    <h2>📑 사내 규정 RAG 챗봇</h2>
+    <div style="display: flex; align-items: center; margin-bottom: 15px;">
+      <img src="/static/img/offciemate.png" alt="Officemate Logo" style="width: 100px; height: 100px; margin-right: 10px;">
+      <h2 style="margin: 0;">사내규정 Q&A 챗봇</h2>
+    </div>
     <div id="messages"></div>
     <div id="inputbox">
       <input type="text" id="query" placeholder="질문을 입력하세요..." />
@@ -54,7 +57,7 @@
       if (data.matches && data.matches.length > 0) {
         text += "📌 근거 문서:\n";
         data.matches.forEach((m, i) => {
-          text += `[${i+1}] ${m.title} (점수: ${m.final_score})\n`;
+          text += `[${i+1}] ${m.title} (최종점수: ${m.최종점수}, 의미점수: ${m.의미점수})\n`;
           text += m.text_snippet + "\n\n";
         });
       }

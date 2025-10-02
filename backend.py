@@ -26,9 +26,9 @@ app.add_middleware(
 )
 
 # 정적 파일 서빙 설정
-templates_path = "/home/alpaco/kimcy/Office_AI_Agent_System/templates"
-if os.path.exists(templates_path):
-    app.mount("/static", StaticFiles(directory=templates_path), name="static")
+project_path = "/home/alpaco/kimcy/Office_AI_Agent_System"
+if os.path.exists(project_path):
+    app.mount("/static", StaticFiles(directory=project_path), name="static")
 
 # RAGAgent 인스턴스 준비
 agent = RAGAgent(
@@ -73,7 +73,19 @@ def ask_question(req: QueryRequest):
         keyword_bonus=0.2,
         gen_max_new_tokens=2000
     )
-    return ans
+    
+    # numpy 타입을 Python 기본 타입으로 변환하여 JSON 직렬화 문제 해결
+    def convert_numpy_types(obj):
+        if isinstance(obj, dict):
+            return {key: convert_numpy_types(value) for key, value in obj.items()}
+        elif isinstance(obj, list):
+            return [convert_numpy_types(item) for item in obj]
+        elif hasattr(obj, 'item'):  # numpy scalar types
+            return obj.item()
+        else:
+            return obj
+    
+    return convert_numpy_types(ans)
 
 if __name__ == "__main__":
     uvicorn.run("backend:app", host="0.0.0.0", port=8000, reload=True)

@@ -185,7 +185,7 @@ class RAGAgent:
         for idx, score in hits_with_indices:
             if idx < 0: continue
 
-            bonus = 1.0
+            bonus = 0.2
             keywords = self.chunk_keywords[idx] # 해당 문서의 제목에서 추출한 키워드
             for kw in keywords:
                 if kw in query: # 키워드가 사용자 질문에 포함되어 있다면
@@ -216,8 +216,8 @@ class RAGAgent:
             
             response["matches"].append({
             "title": chunk.get("title",""),
-            "semantic_score": round(semantic_score, 4),
-            "final_score": round(final_score, 4),
+            "의미점수": round(semantic_score, 4),
+            "최종점수": round(final_score, 4),
             "text_snippet": format_document_text(snippet),  # 포매팅 적용
             "full_text": format_document_text(chunk["text"])  # 전체 텍스트도 포매팅
               })
