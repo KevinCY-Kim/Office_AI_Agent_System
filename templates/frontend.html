@@ -41,7 +41,7 @@
       document.getElementById("messages").appendChild(userMsg);
 
       // API 호출
-      const response = await fetch("http://localhost:8000/ask", {
+      const response = await fetch("http://localhost:8002/ask", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ query })

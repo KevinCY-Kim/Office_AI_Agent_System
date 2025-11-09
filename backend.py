@@ -88,4 +88,4 @@ def ask_question(req: QueryRequest):
     return convert_numpy_types(ans)
 
 if __name__ == "__main__":
-    uvicorn.run("backend:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("backend:app", host="0.0.0.0", port=8002, reload=True)
